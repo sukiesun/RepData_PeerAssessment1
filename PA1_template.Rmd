@@ -4,17 +4,36 @@
 ## Loading and preprocessing the data
 
 
+```{r}
+activity <- read.csv("activity.csv")
+```
 
 ## What is mean total number of steps taken per day?
-
-
+```{r}
+mydata <- na.omit(activity)
+aggdata1 <- aggregate(mydata$steps,list(date = mydata$date),sum)
+barplot(aggdata1$x, xlab = "date", ylab=" total number of steps taken each day", names.arg=aggdata1$date)
+agg_mean <- aggregate(mydata$steps,list(date = mydata$date),mean)
+agg_median <- aggregate(mydata$steps,list(date = mydata$date),median)
+```
 
 ## What is the average daily activity pattern?
-
-
+```{r}
+average_steps <- aggregate(mydata$steps,list(interval = mydata$interval),mean)
+plot(average_steps$interval, average_steps$x, type ="l", xlab="5-minute interval", ylab = "average steps")
+#order by average steps, 835 contains the maximum number of steps
+neworder <- average_steps[order(x),]
+```
 
 ## Imputing missing values
-
-
-
+```{r}
+total_NA <- sum(is.na(activity$steps))
+total_NA
+for (i in 1:2304){
+x <- activity[is.na(activity),]
+if (x[i,3]==average_steps$interval){
+activity[is.na(activity),][i,1] <- average_steps$x
+}
+}
+```
 ## Are there differences in activity patterns between weekdays and weekends?
